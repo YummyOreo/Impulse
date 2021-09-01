@@ -14,16 +14,14 @@ public class BetterF5Mod extends Mod {
 	
 	@Override
 	public void onEnable() {
-		super.onEnable();
-		
 		mc.gameSettings.thirdPersonView = this.F5;
-
+		super.onEnable();
 	}
 	
 	@Override
 	public void onDisable() {
-		super.onDisable();
 		mc.gameSettings.thirdPersonView = 0;
+		super.onDisable();
 	}
 	
 	public void setF5(int F5) {

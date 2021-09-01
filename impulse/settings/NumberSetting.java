@@ -2,9 +2,9 @@ package impulse.settings;
 
 public class NumberSetting extends Setting {
 
-	public double value, minimum, maximum, increment;
+	public int value, minimum, maximum, increment;
 
-	public NumberSetting(String name, double value, double minimum, double maximum, double increment) {
+	public NumberSetting(String name, int value, int minimum, int maximum, int increment) {
 		this.name = name;
 		this.value = value;
 		this.minimum = minimum;
@@ -12,40 +12,36 @@ public class NumberSetting extends Setting {
 		this.increment = increment;
 	}
 
-	public double getValue() {
+	public int getValue() {
 		return value;
 	}
 
-	public void setValue(double value) {
+	public void setValue(int value) {
 		double precision = 1/ increment;
-		this.value = Math.round(Math.max(minimum, Math.min(maximum, value)) * precision) / precision;
+		this.value = value;
 	}
 	
-	public void increment(boolean positive) {
-		setValue(getValue() + (positive ? 1 : -1) * increment);
-	}
-
 	public double getMinimum() {
 		return minimum;
 	}
 
-	public void setMinimum(double minimum) {
+	public void setMinimum(int minimum) {
 		this.minimum = minimum;
 	}
 
-	public double getMaximum() {
+	public int getMaximum() {
 		return maximum;
 	}
 
-	public void setMaximum(double maximum) {
+	public void setMaximum(int maximum) {
 		this.maximum = maximum;
 	}
 
-	public double getIncrement() {
+	public int getIncrement() {
 		return increment;
 	}
 
-	public void setIncrement(double increment) {
+	public void setIncrement(int increment) {
 		this.increment = increment;
 	}
 
@@ -53,16 +49,16 @@ public class NumberSetting extends Setting {
 		return value;
 	}
 
-	public void setNumber(double value) {
+	public void setNumber(int value) {
 		this.value = value;
 		
 	}
 
-	public double getMaximumValue() {
+	public int getMaximumValue() {
 		return maximum;
 	}
 
-	public double getMinimumValue() {
+	public int getMinimumValue() {
 		return minimum;
 	}
 

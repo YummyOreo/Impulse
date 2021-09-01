@@ -1,7 +1,9 @@
 package impulse.hud.mod.impl;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -9,12 +11,25 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import impulse.hud.mod.HudMod;
+import impulse.hud.mod.ui.buttons.BackgroundButton;
+import impulse.hud.mod.ui.buttons.ColorButton;
+import impulse.hud.mod.ui.temp.ToggleButton;
+import impulse.hud.mod.utils.Loader;
+import impulse.settings.ModeSetting;
+import impulse.settings.NumberSetting;
+import impulse.util.ui.GuiUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
 
 public class KeystrokesMod extends HudMod {
-
+	
+	private ColorButton colorButton;
+	private BgPressedButton bgPressedButton;
+	
+	NumberSetting bgPressed;
+	
 	private List<Long> clicksRMB = new ArrayList<Long>();
 	private List<Long> clicksLMB = new ArrayList<Long>();
 	private boolean pressedLMB;
@@ -24,6 +39,31 @@ public class KeystrokesMod extends HudMod {
 	
 	public KeystrokesMod() {
 		super("[Keystrokes]", 120, 250, "Allows you to see your CPS, and what keys your pressing!");
+		
+		this.bgPressed = new NumberSetting("bgPressed", new Color(255, 255, 255, 102).getRGB(), new Color(255, 255, 255, 102).getRGB(), new Color(0, 0, 0, 102).getRGB(), new Color(255, 255, 255, 102).getRGB());
+		this.loadSetting(); 
+	}
+		
+	@Override
+	public HashMap<String, Object> getSettings() {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		map.put(bgPressed.name, bgPressed.getValue());
+		
+		return map;
+		
+	}
+	
+	@Override
+	public void loadSetting() {
+		this.bgPressed.value = (int) Loader.loadSetting(this.name, "bgPressed", new Color(0, 0, 0, 102).getRGB());
+	}
+	
+	@Override
+	public void changeSetting(String name, Object value) {
+		if (name == "bgPressed") {
+			this.bgPressed.value =  (int) value;
+		}
 	}
 	
 	public static enum KeystrokesMode {
@@ -114,6 +154,10 @@ public class KeystrokesMod extends HudMod {
 	
 	private KeystrokesMode mode = KeystrokesMode.WASD_JUMP_MOUSE;
 	
+	public int getPressedBG() {
+		return (int) bgPressed.value;
+	}
+	
 	@Override
 	public int getWidth() {
 		return 58;
@@ -154,10 +198,14 @@ public class KeystrokesMod extends HudMod {
 			
 			int textWidth = fr.getStringWidth(key.getName());
 			
-			Gui.drawRect(getX() + key.getX(), getY() + key.getY(), getX() + key.getX() + key.getWidth(), getY() + key.getY() + key.getHeight(), key.isDown() ? new Color(114, 223, 228, 102).getRGB() : new Color(0, 0, 0, 120).getRGB());
+			Gui.drawRect(getX() + key.getX(), getY() + key.getY(), getX() + key.getX() + key.getWidth(), getY() + key.getY() + key.getHeight(), key.isDown() ? getPressedBG() : new Color(0, 0, 0, 120).getRGB());
 			
-			fr.drawStringWithShadow(key.getName(), getX() + key.getX() + key.getWidth() / 2 - textWidth / 2, getY() + key.getY() + key.getHeight() / 2 - 4, key.isDown() ? this.getColor() : -1);
-			
+			if (this.getRainbow() && key.isDown()) {
+				GuiUtils.drawChromaString(key.getName(), getX() + key.getX() + key.getWidth() / 2 - textWidth / 2, getY() + key.getY() + key.getHeight() / 2 - 4, true);
+			} else {
+				fr.drawStringWithShadow(key.getName(), getX() + key.getX() + key.getWidth() / 2 - textWidth / 2, getY() + key.getY() + key.getHeight() / 2 - 4, key.isDown() ? this.getColor() : -1);
+			}
+						
 		}
 		
 		GL11.glPopMatrix();
@@ -201,9 +249,16 @@ public class KeystrokesMod extends HudMod {
 		    }
 		}
 		
-		Gui.drawRect(getX() + 1, getY() + 52 + 6, getX() + 1 + 28, getY() + 52 + 18,  mc.gameSettings.keyBindAttack.isKeyDown() ? new Color(114, 223, 228, 102).getRGB() : new Color(0, 0, 0, 120).getRGB());
+		Gui.drawRect(getX() + 1, getY() + 52 + 6, getX() + 1 + 28, getY() + 52 + 18,  mc.gameSettings.keyBindAttack.isKeyDown() ? getPressedBG() : new Color(0, 0, 0, 120).getRGB());
 		
-		fr.drawStringWithShadow(String.valueOf(this.clicksLMB.size()), getX() + 1 + 28 / 2 - fr.getStringWidth(String.valueOf(this.clicksLMB.size())) / 2, getY() + 52 + 20 / 2 - 4, mc.gameSettings.keyBindAttack.isKeyDown() ? this.getColor() : -1);
+		
+		if (this.getRainbow() && mc.gameSettings.keyBindAttack.isKeyDown()) {
+			GuiUtils.drawChromaString(String.valueOf(this.clicksLMB.size()), getX() + 1 + 28 / 2 - fr.getStringWidth(String.valueOf(this.clicksLMB.size())) / 2, getY() + 52 + 20 / 2 - 4, true);
+		} else {
+			fr.drawStringWithShadow(String.valueOf(this.clicksLMB.size()), getX() + 1 + 28 / 2 - fr.getStringWidth(String.valueOf(this.clicksLMB.size())) / 2, getY() + 52 + 20 / 2 - 4, mc.gameSettings.keyBindAttack.isKeyDown() ? this.getColor() : -1);
+		}
+		
+		
 		
 		
 		final long timeRMB = System.currentTimeMillis();
@@ -213,10 +268,63 @@ public class KeystrokesMod extends HudMod {
 		    }
 		}
 		
-		Gui.drawRect(getX() + 31, getY() + 52 + 6, getX() + 31 + 28, getY() + 52 + 18,  mc.gameSettings.keyBindUseItem.isKeyDown() ? new Color(114, 223, 228, 102).getRGB() : new Color(0, 0, 0, 120).getRGB());
+		Gui.drawRect(getX() + 31, getY() + 52 + 6, getX() + 31 + 28, getY() + 52 + 18,  mc.gameSettings.keyBindUseItem.isKeyDown() ? getPressedBG() : new Color(0, 0, 0, 120).getRGB());
 		
-		fr.drawStringWithShadow(String.valueOf(this.clicksRMB.size()), getX() + 31 + 28 / 2 - fr.getStringWidth(String.valueOf(this.clicksRMB.size())) / 2, getY() + 52 + 20 / 2 - 4, mc.gameSettings.keyBindUseItem.isKeyDown() ? this.getColor() : -1);
+		if (this.getRainbow() && mc.gameSettings.keyBindUseItem.isKeyDown()) {
+			GuiUtils.drawChromaString(String.valueOf(this.clicksRMB.size()), getX() + 31 + 28 / 2 - fr.getStringWidth(String.valueOf(this.clicksRMB.size())) / 2, getY() + 52 + 20 / 2 - 4, true);
+		} else {
+			fr.drawStringWithShadow(String.valueOf(this.clicksRMB.size()), getX() + 31 + 28 / 2 - fr.getStringWidth(String.valueOf(this.clicksRMB.size())) / 2, getY() + 52 + 20 / 2 - 4, mc.gameSettings.keyBindUseItem.isKeyDown() ? this.getColor() : -1);
+		}
 		
+	}
+	
+	private class BgPressedButton extends ToggleButton {
+
+		public BgPressedButton(int x, int y, HudMod m) {
+			super(x, y, m, "Backround Pressed");
+		}
+		
+		@Override
+		public int getColor() {
+			return (int) this.m.getSettings().get("bgPressed");
+		}
+
+		@Override
+		public void handleClick() {
+			if(this.getColor() == new Color(255, 255, 255, 102).getRGB()) {
+				this.m.changeSetting("bgPressed", new Color(0, 0, 0, 102).getRGB());
+			} else if (this.getColor() == new Color(0, 0, 0, 102).getRGB()) {
+				this.m.changeSetting("bgPressed", new Color(255, 0, 0, 102).getRGB());
+			} else if (this.getColor() == new Color(255, 0, 0, 102).getRGB()) {
+				this.m.changeSetting("bgPressed", new Color(0, 255, 0, 102).getRGB());
+			} else if (this.getColor() == new Color(0, 255, 0, 102).getRGB()) {
+				this.m.changeSetting("bgPressed", new Color(0, 0, 255, 102).getRGB());
+			} else if (this.getColor() == new Color(0, 0, 255, 102).getRGB()) {
+				this.m.changeSetting("bgPressed", new Color(255, 255, 255, 102).getRGB());
+			} 
+		}
+		
+	}
+	
+	@Override
+	public void initGui(GuiScreen gui) {
+		this.colorButton = new ColorButton(110, 90, Minecraft.getMinecraft().fontRendererObj.getStringWidth("Change Text Color") + 5, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT + 2, this);
+		
+		this.bgPressedButton = new BgPressedButton(110, 110, this);
+	}
+	
+	@Override
+	public void drawScreen(GuiScreen gui, int mouseX, int mouseY, float partialTicks) {
+		colorButton.draw();
+		
+		bgPressedButton.draw();
+	}
+	
+	@Override
+	public void mouseClicked(GuiScreen gui, int mouseX, int mouseY, int mouseButton) throws IOException {
+		colorButton.onClick(mouseX, mouseY, mouseButton);
+		
+		bgPressedButton.onClick(mouseX, mouseY, mouseButton);
 	}
 	
 }

@@ -25,6 +25,10 @@ public class Configuration {
     public Object get(String key) {
         return options.get(key);
     }
+    
+    public HashMap<String, Object> getSetting(String key) {
+    	return (HashMap<String, Object>) options.get(key);
+    }
 
     public void set(String key, Object value) {
         options.put(key, value);

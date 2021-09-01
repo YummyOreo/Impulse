@@ -9,11 +9,12 @@ import com.sun.jna.platform.unix.X11.Font;
 import impulse.Impulse;
 import impulse.hud.mod.HudManager;
 import impulse.hud.mod.HudMod;
+import impulse.hud.mod.tag.ParseTags;
 import impulse.ui.clickgui.comp.ModButton;
 import impulse.ui.clickgui.comp.SettingsButton;
 import impulse.ui.settings.buttons.BackButton;
-import impulse.ui.settings.buttons.utils.ColorButton;
 import impulse.ui.settings.buttons.utils.EnabledButton;
+import impulse.util.ui.GuiUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -25,9 +26,8 @@ import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 
-public class SettingsGui extends GuiScreen{
+public class SettingsGui extends GuiScreen {
 	
-	private ColorButton colorButton;
 	private BackButton backButton;
 	private EnabledButton enabledButton;
 	
@@ -45,23 +45,16 @@ public class SettingsGui extends GuiScreen{
 		this.m = m;
 	}
 	
-	public SettingsGui(HudMod m, boolean menu) {
-		this.m = m;
-		this.menu = menu;
-	}
-	
 	@Override
 	public void initGui() {
 		super.initGui();
 		
 		ScaledResolution sr = new ScaledResolution(mc);
 		
-		this.backButton = new BackButton(110, 55, 20, fontRendererObj.FONT_HEIGHT + 2, m, menu);
-		if ((this.m.getX() != 0 && this.m.getY() != 0) || this.m.description.split(":")[0].equals("Cos")) {
-			this.colorButton = new ColorButton(110, 90, fontRendererObj.getStringWidth("Change Text Color") + 5, fontRendererObj.FONT_HEIGHT + 2, this.m);
-		} else {
-			System.out.println(this.m.name);
-		}
+		this.backButton = new BackButton(110, 55, 20, fontRendererObj.FONT_HEIGHT + 2, m);
+				
+		this.m.initGui(this);
+		
 		this.enabledButton = new EnabledButton(100 , sr.getScaledHeight() - 70, sr.getScaledWidth() - 100, fontRendererObj.FONT_HEIGHT + 2, this.m);
 	}
 	
@@ -75,7 +68,13 @@ public class SettingsGui extends GuiScreen{
 		if (this.menu) {
 			this.drawDefaultBackground();
 		}
-		Gui.drawRect(100, 50, sr.getScaledWidth() - 100, sr.getScaledHeight() - 50, new Color(0, 0, 0, 170).getRGB());
+
+		
+		GuiUtils.drawRoundedRect(100 - 3, 50 - 3, sr.getScaledWidth() - 100 + 3, sr.getScaledHeight() - 50 + 3, 2, new Color(88, 95, 110).getRGB());;
+		
+		Gui.drawRect(100, 50, sr.getScaledWidth() - 100, sr.getScaledHeight() - 50, new Color(85, 91, 102).getRGB());
+		Gui.drawRect(100, 50, sr.getScaledWidth() - 100, 80, new Color(47, 50, 56).getRGB());
+		
 		
 		Gui.drawRect(100, 85, sr.getScaledWidth() - 100, 80, new Color(114, 223, 228, 255).getRGB());
 		GlStateManager.pushMatrix();
@@ -84,18 +83,11 @@ public class SettingsGui extends GuiScreen{
 		GlStateManager.scale(0.5, 0.5, 1);
 		GlStateManager.translate(0.5, 0.5, 1);
 		
-		if (this.m.description.split(":")[0].equals("Cos") || this.m.description.split(":")[0].equals("CosNoSettings")) {
-			this.drawCenteredString(fr, this.m.description.split(":")[1], (sr.getScaledWidth() / 4F) * 2f, 69.5F, -1);
-		} else {
-			this.drawCenteredString(fr, this.m.description, (sr.getScaledWidth() / 4F) * 2f, 69.5F, -1);
-		}
+		this.drawCenteredString(fr, this.m.description, (sr.getScaledWidth() / 4F) * 2f, 69.5F, -1);
+		
 		GlStateManager.popMatrix();
 		
-		try {
-			colorButton.draw();
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+		this.m.drawScreen(this, mouseX, mouseY, partialTicks);
 		
 		backButton.draw();
 		
@@ -103,14 +95,10 @@ public class SettingsGui extends GuiScreen{
 	}
 	
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+	public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		
-		try {
-			colorButton.onClick(mouseX, mouseY, mouseButton);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+		this.m.mouseClicked(this, mouseX, mouseY, mouseButton);
 		
 		backButton.onClick(mouseX, mouseY, mouseButton);
 		

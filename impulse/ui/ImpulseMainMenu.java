@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL11;
 import impulse.Impulse;
 import impulse.cosmetics.textureManager;
 import impulse.ui.clickgui.ClickGUI;
-import impulse.ui.menu.MenuClickGui;
 import impulse.ui.whitlist.Checks;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -61,7 +60,9 @@ public class ImpulseMainMenu extends GuiScreen {
 		GlStateManager.translate(-(width/2f) , -(height/2f), 0);
 		
 		this.drawCenteredString(mc.fontRendererObj, Impulse.INSTANCE.NAME, width/2f, height/2.6f, -1);
+		
 		GlStateManager.popMatrix();
+		this.drawCenteredString(mc.fontRendererObj, "v" + Impulse.INSTANCE.VERSION, width/1.53f, height/5f, -1);
 		if (!Impulse.INSTANCE.newUpdate) {
 			this.drawCenteredString(mc.fontRendererObj, "By: " + Impulse.INSTANCE.AURTHOR, width/2f, height/3.5f, -1);
 		} else {
@@ -70,10 +71,12 @@ public class ImpulseMainMenu extends GuiScreen {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(width, height, 0);
 		GlStateManager.scale(0.5F, 0.5F, 1);
+		GlStateManager.translate(0.5F, 0.5F, 1);
+		
 		GlStateManager.color(96, 96, 96);
 		GlStateManager.translate(-(width) , -(height), 0);
-		this.drawCenteredString(mc.fontRendererObj, "Copyright Mojang Studios", (width) / 1.15F, height/2f * 1.9F, -1);
-		this.drawCenteredString(mc.fontRendererObj, "Impulse Client " + Impulse.INSTANCE.VERSION, (width - width * 2) / 1.1F, height/2f * 1.9F, -1);
+		this.drawCenteredString(mc.fontRendererObj, "Not connected to Mojang Studios", (width) / 1.15F, height/2f * 1.94F, -1);
+		this.drawCenteredString(mc.fontRendererObj, "Impulse Client " + Impulse.INSTANCE.VERSION, (width - width * 2) / 1.08F, height/2f * 1.94F, -1);
 		GlStateManager.popMatrix();
 		
 		super.drawScreen(mouseX, mouseY, partialTicks);
@@ -85,9 +88,8 @@ public class ImpulseMainMenu extends GuiScreen {
 	public void initGui() {
 		this.buttonList.add(new GuiButton(1, this.width/2 - 97, height / 2 -  60, "Singleplayer"));
 		this.buttonList.add(new GuiButton(2, this.width/2 - 97, height / 2 -  35, "Multiplayer"));
-		this.buttonList.add(new GuiButton(3, this.width/2 - 97, height / 2 + -10, "Settings"));
-		this.buttonList.add(new GuiButton(4, this.width/2 - 97, height / 2 + 15, "Mods"));
-		this.buttonList.add(new GuiButton(5, this.width/2 - 97, height / 2 + 40, "Quit"));
+		this.buttonList.add(new GuiButton(3, this.width/2 - 97, height / 2 + -4, 96, 20, "Options..."));
+		this.buttonList.add(new GuiButton(4, this.width/2 - (1 / 8) + 7 , height / 2 + -4, 96, 20, "Quit"));
 		super.initGui();
 	}
 	
@@ -101,8 +103,6 @@ public class ImpulseMainMenu extends GuiScreen {
 		} else if (button.id == 3) {
 			mc.displayGuiScreen(new GuiOptions(this, mc.gameSettings));
 		} else if (button.id == 4) {
-			mc.displayGuiScreen(new MenuClickGui());
-		} else if (button.id == 5) {
 			mc.shutdown();
 		} 
 		

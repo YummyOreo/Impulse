@@ -6,9 +6,10 @@ import java.util.ArrayList;
 
 import impulse.Impulse;
 import impulse.hud.mod.HudMod;
-import impulse.ui.clickgui.comp.BackButton;
-import impulse.ui.clickgui.comp.ModButton;
-import impulse.ui.clickgui.comp.SettingsButton;
+import impulse.hud.mod.impl.ImpulseServerMod;
+import impulse.ui.clickgui.comp.*;
+import impulse.util.ui.GuiUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -19,89 +20,113 @@ public class ClickGUI extends GuiScreen {
 	ArrayList<ModButton> modButtons = new ArrayList<>();
 	ArrayList<SettingsButton> settingsButton = new ArrayList<>();
 	private BackButton backButton;
+	private ResetButton resetButton;
+	private ImpusleServerButtom impusleServerButtom;
+	private int longString = Minecraft.getMinecraft().fontRendererObj.getStringWidth("Perspective Mod") + 5;
 	
 	@Override
 	public void initGui() {
+		// ADD 25
 		super.initGui();
 		
-		int rowOne = 110;
-		int rowTwo = 110;
-		int rowThree = 110;
+		int row = 110;
 		
 		int amp = 5;
 		
 		// Back Button
 		this.backButton = new BackButton(110, 55, 20, mc.fontRendererObj.FONT_HEIGHT + 2);
+		this.resetButton = new ResetButton(230, 55, 31, mc.fontRendererObj.FONT_HEIGHT + 2);
 		// server button
-		this.modButtons.add(new ModButton(140, 55, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.impulseServerMod.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.impulseServerMod));
-		this.settingsButton.add(new SettingsButton(140 + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.impulseServerMod.name) + 4, 55, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.impulseServerMod));
+		this.impusleServerButtom = (new ImpusleServerButtom(130, 55, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.impulseServerMod.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.impulseServerMod));
 		// a
-		this.modButtons.add(new ModButton(rowOne, 80, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.armorStatus.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.armorStatus));
-		this.settingsButton.add(new SettingsButton(rowOne + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.armorStatus.name) + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.armorStatus));
-		rowOne += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.armorStatus.name) + 5) + 10.5F) + amp;
+		this.modButtons.add(new ModButton(row, 80, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.armorStatus));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.armorStatus));
+		row += ((longString + 5) + 10.5F) + amp;
 		
-		this.modButtons.add(new ModButton(rowOne, 80, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.autoTipMod.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.autoTipMod));
-		this.settingsButton.add(new SettingsButton(rowOne + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.autoTipMod.name) + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.autoTipMod));
-		rowOne += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.autoTipMod.name) + 5) + 10.5F) + amp;
+		this.modButtons.add(new ModButton(row, 80, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.autoGG));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.autoGG));
+		row += ((longString+ 5) + 10.5F) + amp;
+		
+		this.modButtons.add(new ModButton(row, 80, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.autoTipMod));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.autoTipMod));
+		row += ((longString+ 5) + 10.5F) + amp;
 		//b
 		//c
-		this.modButtons.add(new ModButton(rowOne, 80, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.cps.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.cps));
-		this.settingsButton.add(new SettingsButton(rowOne + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.cps.name) + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.cps));
-		rowOne += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.cps.name) + 5) + 10.5F) + amp;
+		this.modButtons.add(new ModButton(row, 80, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.cps));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.cps));
+		row += ((longString + 5) + 10.5F) + amp;
 		//d 
-		this.modButtons.add(new ModButton(rowOne, 80, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.discordRPCToggle.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.discordRPCToggle));
-		this.settingsButton.add(new SettingsButton(rowOne + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.discordRPCToggle.name) + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.discordRPCToggle));
-		rowOne += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.discordRPCToggle.name) + 5) + 10.5F) + amp;
+
+		// -----
+		row = 110;
+		this.modButtons.add(new ModButton(row, 105, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.discordRPCToggle));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 105, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.discordRPCToggle));
+		row += ((longString + 5) + 10.5F) + amp;
 		//e
 		//f
-		this.modButtons.add(new ModButton(rowOne, 80, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.fpsMod.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.fpsMod));
-		this.settingsButton.add(new SettingsButton(rowOne + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.fpsMod.name) + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.fpsMod));
-		rowOne += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.fpsMod.name) + 5) + 10.5F) + amp;
+		this.modButtons.add(new ModButton(row, 105, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.fpsMod));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 105, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.fpsMod));
+		row += ((longString + 5) + 10.5F) + amp;
+		
+		this.modButtons.add(new ModButton(row, 105, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.fullBrightMod));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 105, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.fullBrightMod));
+		row += ((longString + 5) + 10.5F) + amp;
 		//g
 		//h
 		//i
 		//j
 		//k
-		this.modButtons.add(new ModButton(rowOne, 80, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.keystrokes.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.keystrokes));
-		this.settingsButton.add(new SettingsButton(rowOne + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.keystrokes.name) + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.keystrokes));
-		rowOne += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.keystrokes.name) + 5) + 10.5F) + amp;
+		this.modButtons.add(new ModButton(row, 105, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.keystrokes));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 105, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.keystrokes));
+		row += ((longString + 5) + 10.5F) + amp;
 		//l
 		//m
+		// -----
+		row = 110;
+		this.modButtons.add(new ModButton(row, 130, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.memoryMod));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 130, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.memoryMod));
+		row += ((longString + 5) + 10.5F) + amp;
 		//n
 		//o
 		//p
+		
+		this.modButtons.add(new ModButton(row, 130, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.perspectiveMod));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 130, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.perspectiveMod));
+		row += ((longString + 5) + 10.5F) + amp;
+		
+		this.modButtons.add(new ModButton(row, 130, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.positionMod));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 130, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.positionMod));
+		row += ((longString + 5) + 10.5F) + amp;
+		
+		this.modButtons.add(new ModButton(row, 130, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.potionEffect));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 130, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.potionEffect));
+		row += ((longString + 5) + 10.5F) + amp;
+		
 		// -----
-		this.modButtons.add(new ModButton(rowTwo, 95, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.perspectiveMod.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.perspectiveMod));
-		this.settingsButton.add(new SettingsButton(rowTwo + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.perspectiveMod.name) + 4, 95, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.perspectiveMod));
-		rowTwo += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.perspectiveMod.name) + 5) + 10.5F) + amp;
-		
-		this.modButtons.add(new ModButton(rowTwo, 95, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.positionMod.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.positionMod));
-		this.settingsButton.add(new SettingsButton(rowTwo + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.positionMod.name) + 4, 95, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.positionMod));
-		rowTwo += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.positionMod.name) + 5) + 10.5F) + amp;
-
-		this.modButtons.add(new ModButton(rowTwo, 95, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.potionEffect.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.potionEffect));
-		this.settingsButton.add(new SettingsButton(rowTwo + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.potionEffect.name) + 4, 95, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.potionEffect));
-		rowTwo += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.potionEffect.name) + 5) + 10.5F) + amp;
-
-		
-		this.modButtons.add(new ModButton(rowTwo, 95, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.pingMod.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.pingMod));
-		this.settingsButton.add(new SettingsButton(rowTwo + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.pingMod.name) + 4, 95, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.pingMod));
-		rowTwo += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.pingMod.name) + 5) + 10.5F) + amp;
+		row = 110;
+		this.modButtons.add(new ModButton(row, 155, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.pingMod));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 155, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.pingMod));
+		row += ((longString + 5) + 10.5F) + amp;
 		//q
 		//r
+		this.modButtons.add(new ModButton(row, 155, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.resourcePackMod));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 155, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.resourcePackMod));
+		row += ((longString + 5) + 10.5F) + amp;
 		//s
-		this.modButtons.add(new ModButton(rowThree, 110, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.serverMod.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.serverMod));
-		this.settingsButton.add(new SettingsButton(rowThree + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.serverMod.name) + 4, 110, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.serverMod));
-		rowThree += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.serverMod.name) + 5) + 10.5F) + amp;
 		
-		this.modButtons.add(new ModButton(rowThree, 110, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.toggleStrintGui.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.toggleStrintGui));
-		this.settingsButton.add(new SettingsButton(rowThree + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.toggleStrintGui.name) + 4, 110, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.toggleStrintGui));
-		rowThree += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.toggleStrintGui.name) + 5) + 10.5F) + amp;
+		this.modButtons.add(new ModButton(row, 155, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.serverMod));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 155, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.serverMod));
+		row += ((longString + 5) + 10.5F) + amp;
 		//t
+		this.modButtons.add(new ModButton(row, 155, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.targetHUD));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 155, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.targetHUD));
+		row += ((longString + 5) + 10.5F) + amp;
+		
 		// -----
-		this.modButtons.add(new ModButton(rowThree, 110, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.targetHUD.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.targetHUD));
-		this.settingsButton.add(new SettingsButton(rowThree + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.targetHUD.name) + 4, 110, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.targetHUD));
-		rowThree += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.targetHUD.name) + 5) + 10.5F) + amp;
+		row = 110;
+		this.modButtons.add(new ModButton(row, 180, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.toggleStrintGui));
+		this.settingsButton.add(new SettingsButton(row + longString + 4, 180, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.toggleStrintGui));
+		row += ((longString + 5) + 10.5F) + amp;
 		//u
 		//v
 		//w
@@ -113,19 +138,16 @@ public class ClickGUI extends GuiScreen {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		
-		this.drawDefaultBackground();
-		
 		ScaledResolution sr = new ScaledResolution(mc);
 		
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		
-		Gui.drawRect(100, 50, sr.getScaledWidth() - 100, sr.getScaledHeight() - 50, new Color(0, 0, 0, 170).getRGB());
+		GuiUtils.drawRoundedRect(100 - 3, 50 - 3, sr.getScaledWidth() - 100 + 3, sr.getScaledHeight() - 50 + 3, 2, new Color(88, 95, 110).getRGB());
+		
+		Gui.drawRect(100, 50, sr.getScaledWidth() - 100, sr.getScaledHeight() - 50, new Color(85, 91, 102).getRGB());
+		Gui.drawRect(100, 50, sr.getScaledWidth() - 100, 70, new Color(47, 50, 56).getRGB());
 		
 		Gui.drawRect(100, 75, sr.getScaledWidth() - 100, 70, new Color(114, 223, 228, 255).getRGB());
-		GlStateManager.pushMatrix();
-		GlStateManager.scale(2, 2, 1);
-		mc.fontRendererObj.drawStringWithShadow("Mods", (sr.getScaledWidth() / 4F) - mc.fontRendererObj.getStringWidth("Mods") / 2.2F , 26.5F, -1);
-		GlStateManager.popMatrix();
 		
 		for(ModButton m : modButtons) {
 			m.draw();
@@ -136,10 +158,14 @@ public class ClickGUI extends GuiScreen {
 		}
 		
 		backButton.draw();
+		
+		resetButton.draw();
+		
+		impusleServerButtom.draw();
 	}
 	
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+	public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		
 		for (ModButton m : modButtons) {
@@ -151,6 +177,10 @@ public class ClickGUI extends GuiScreen {
 		}
 		
 		backButton.onClick(mouseX, mouseY, mouseButton);
+		
+		resetButton.onClick(mouseX, mouseY, mouseButton);
+		
+		impusleServerButtom.onClick(mouseX, mouseY, mouseButton);
 	}
 	
 	

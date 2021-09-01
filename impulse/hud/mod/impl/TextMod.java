@@ -6,6 +6,7 @@ public class TextMod extends HudMod {
 
 	public TextMod() {
 		super("[Text Mod]", 555, 5, "Filler");
+		this.addTag("Color");
 	}
 	
 	@Override

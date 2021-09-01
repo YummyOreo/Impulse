@@ -31,10 +31,4 @@ public class PerspectiveMod extends HudMod {
 	public int getHeight() {
 		return 0;
 	}
-	
-	@Override
-	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
-		
-	}
 }

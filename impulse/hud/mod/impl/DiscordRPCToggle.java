@@ -1,5 +1,6 @@
 package impulse.hud.mod.impl;
 
+import impulse.discord.Discordrpc;
 import impulse.hud.mod.HudMod;
 
 public class DiscordRPCToggle extends HudMod {
@@ -28,5 +29,23 @@ public class DiscordRPCToggle extends HudMod {
 	@Override
 	public int getHeight() {
 		return 0;
+	}
+	
+	@Override
+	public void firstLoad() {
+		super.firstLoad();
+		this.enabled = true;
+	}
+	
+	@Override
+	public void onEnable() {
+		super.onEnable();
+		Discordrpc.startDiscordRPC();
+	}
+	
+	@Override
+	public void onDisable() {
+		super.onDisable();
+		Discordrpc.stopDiscordRPC();
 	}
 }

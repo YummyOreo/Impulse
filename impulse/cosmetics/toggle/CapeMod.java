@@ -5,7 +5,8 @@ import impulse.hud.mod.HudMod;
 public class CapeMod extends HudMod {
 
 	public CapeMod() {
-		super("[Cape]", 0, 0, "CosNoSettings:Enable and disable your cape!");
+		super("[Cape]", 0, 0, "Enable and disable your cape!");
+		this.addTag("Cos");
 	}
 	
 	@Override
@@ -34,5 +35,11 @@ public class CapeMod extends HudMod {
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
 		return super.isEnabled();
+	}
+	
+	@Override
+	public void firstLoad() {
+		super.firstLoad();
+		this.enabled = true;
 	}
 }

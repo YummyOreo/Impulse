@@ -9,10 +9,13 @@ import impulse.ui.clickgui.comp.BackButton;
 import impulse.ui.clickgui.comp.ModButton;
 import impulse.ui.clickgui.comp.SettingsButton;
 import impulse.ui.settings.buttons.utils.EnabledButton;
+import impulse.util.ui.GuiUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
 
 public class ClickGUICosmetic extends GuiScreen {
 
@@ -20,6 +23,7 @@ public class ClickGUICosmetic extends GuiScreen {
 	ArrayList<SettingsButton> settingsButton = new ArrayList<>();
 	
 	private BackButton backButton;
+	private int longString = Minecraft.getMinecraft().fontRendererObj.getStringWidth("Top hat mod") + 5;
 	
 	@Override
 	public void initGui() {
@@ -30,31 +34,28 @@ public class ClickGUICosmetic extends GuiScreen {
 		
 		this.backButton = new BackButton(110, 55, 20, mc.fontRendererObj.FONT_HEIGHT + 2);
 		
-		this.modButtons.add(new ModButton(110, 80, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.topHatMod.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.topHatMod));
-		this.settingsButton.add(new SettingsButton(rowOne + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.topHatMod.name) + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.topHatMod));
-		rowOne += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.topHatMod.name) + 5) + 10.5F) + amp;
+		this.modButtons.add(new ModButton(110, 80, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.topHatMod));
+		this.settingsButton.add(new SettingsButton(rowOne + longString + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.topHatMod));
+		rowOne += ((longString + 5) + 10.5F) + amp;
 				
-		this.modButtons.add(new ModButton(rowOne, 80, mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.capeMod.name) + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.capeMod));
-		this.settingsButton.add(new SettingsButton(rowOne + mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.capeMod.name) + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.capeMod));
-		rowOne += ((mc.fontRendererObj.getStringWidth(Impulse.INSTANCE.hudManager.capeMod.name) + 5) + 10.5F) + amp;
+		this.modButtons.add(new ModButton(rowOne, 80, longString + 5, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.capeMod));
+		this.settingsButton.add(new SettingsButton(rowOne + longString + 4, 80, 10, mc.fontRendererObj.FONT_HEIGHT + 2, Impulse.INSTANCE.hudManager.capeMod));
+		rowOne += ((longString + 5) + 10.5F) + amp;
 		}
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		
-		this.drawDefaultBackground();
-		
+				
 		ScaledResolution sr = new ScaledResolution(mc);
 		
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		
-		Gui.drawRect(100, 50, sr.getScaledWidth() - 100, sr.getScaledHeight() - 50, new Color(0, 0, 0, 170).getRGB());
+		GuiUtils.drawRoundedRect(100 - 3, 50 - 3, sr.getScaledWidth() - 100 + 3, sr.getScaledHeight() - 50 + 3, 2, new Color(88, 95, 110).getRGB());
+		
+		Gui.drawRect(100, 50, sr.getScaledWidth() - 100, sr.getScaledHeight() - 50, new Color(85, 91, 102).getRGB());
+		Gui.drawRect(100, 50, sr.getScaledWidth() - 100, 70, new Color(47, 50, 56).getRGB());
 		
 		Gui.drawRect(100, 75, sr.getScaledWidth() - 100, 70, new Color(114, 223, 228, 255).getRGB());
-		GlStateManager.pushMatrix();
-		GlStateManager.scale(2, 2, 1);
-		mc.fontRendererObj.drawStringWithShadow("Cosmetics", (sr.getScaledWidth() / 4F) - mc.fontRendererObj.getStringWidth("Cosmetics") / 2.2F , 26.5F, -1);
-		GlStateManager.popMatrix();
 		
 		for(ModButton m : modButtons) {
 			m.draw();
@@ -65,10 +66,11 @@ public class ClickGUICosmetic extends GuiScreen {
 		}
 		
 		backButton.draw();
+		
 	}
 	
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+	public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		
 		for (ModButton m : modButtons) {

@@ -3,6 +3,7 @@ package impulse;
 import impulse.discord.Discordrpc;
 import impulse.event.EventManager;
 import impulse.event.EventTarget;
+import impulse.event.impl.ChatReceivedEvent;
 import impulse.event.impl.ClientTick;
 import impulse.event.impl.EventUpdate;
 import impulse.hud.HUDConfigScreen;
@@ -23,7 +24,7 @@ import net.minecraft.util.EnumChatFormatting;
 public class Impulse {
 
 	// defs the info about the client
-	public String NAME = "Impulse Client", VERSION = "1.15", AURTHOR = "YummyOreo", NAMEVER = NAME + " " + VERSION;
+	public String NAME = "Impulse Client", VERSION = "1.17", AURTHOR = "YummyOreo", NAMEVER = NAME + " " + VERSION;
 
 	public static Impulse INSTANCE = new Impulse();
 
@@ -53,6 +54,8 @@ public class Impulse {
 	public boolean newWorld = false;
 
 	public boolean newUpdate = false;
+	
+	public boolean hasReset = false;
 
 	public EventManager eventManager;
 	public Config config;
@@ -96,6 +99,7 @@ public class Impulse {
 			Discordrpc.startDiscordRPC();
 		}
 
+		//SessionChanger.getInstance().setUserOffline("YummyOreo");
 
 		isWhiteListed = Checks.checkWhitelist();
 
@@ -119,32 +123,58 @@ public class Impulse {
 		}
 
 		System.out.println("Saving mods");
-		// Saves the mods
-		config.saveModConfig();
+		
+		if (!hasReset) {
+			// Saves the mods
+			config.saveModConfig();
+		}
 
 		eventManager.unregister(this);
 	}
+	
+	@EventTarget
+    public void onChatReceivedEvent(ChatReceivedEvent event) {
+		if (mc.getCurrentServerData() != null) {
+			 if(hudManager.autoGG.isEnabled() && (mc.getCurrentServerData().serverIP == "hypixel" || mc.getCurrentServerData().serverIP == "mc.hypixel.net" || mc.getCurrentServerData().serverIP == "hypixel.net")) {
+			    hudManager.autoGG.eventPog("chat", event);
+			}
+		}
+    }
 
 	@EventTarget
 	public void onTick(ClientTick event) {
+		
+		if (mc.gameSettings.thirdPersonView > 1 && hudManager.perspectiveMod.isEnabled()) hudManager.perspectiveMod.toggle();
+		
+		if (mc.getCurrentServerData() != null) {
+			if(hudManager.autoGG.isEnabled() && (mc.getCurrentServerData().serverIP == "hypixel" || mc.getCurrentServerData().serverIP == "mc.hypixel.net" || mc.getCurrentServerData().serverIP == "hypixel.net")) {
+	            hudManager.autoGG.eventPog("tick", event);
+	        }
+		}
+		
 		if (mc.gameSettings.CLICK_GUI.isPressed()) {
 			mc.displayGuiScreen(new HUDConfigScreen());
 
-		} else if (mc.gameSettings.keyBindSprint.isPressed()) {
+		} 
+		if (mc.gameSettings.keyBindSprint.isPressed()) {
 			modManager.toggleStrint.toggle();
 
-		} else if (mc.gameSettings.PERSPECTIVE.isPressed()) {
+		} 
+		if (mc.gameSettings.PERSPECTIVE.isPressed()) {
 			if (mc.getCurrentServerData() == null && Impulse.INSTANCE.hudManager.perspectiveMod.isEnabled()) {
 				modManager.perspectiveMod.toggle();
-			} else if (Impulse.INSTANCE.hudManager.perspectiveMod.isEnabled()
-					|| !mc.getCurrentServerData().serverIP.equals("hypixel.net")) {
+			} else if (Impulse.INSTANCE.hudManager.perspectiveMod.isEnabled()) {
 				modManager.perspectiveMod.toggle();
 			}
-		} else if (mc.gameSettings.F5_BWD.isPressed()) {
+		} 
+		if (mc.gameSettings.F5_BWD.isPressed()) {
+			if (hudManager.perspectiveMod.isEnabled()) hudManager.perspectiveMod.toggle();
 			modManager.betterF5Mod.setF5(1);
 			modManager.betterF5Mod.toggle();
 			;
-		} else if (mc.gameSettings.F5_FWD.isPressed()) {
+		}
+		if (mc.gameSettings.F5_FWD.isPressed()) {
+			if (hudManager.perspectiveMod.isEnabled()) hudManager.perspectiveMod.toggle();
 			modManager.betterF5Mod.setF5(2);
 			modManager.betterF5Mod.toggle();
 		}
@@ -184,7 +214,7 @@ public class Impulse {
 
 		if ((System.currentTimeMillis() - lastTip) > 600000 && mc.getCurrentServerData() != null
 				&& hudManager.autoTipMod.isEnabled()) {
-			if (mc.getCurrentServerData().serverIP == "hypixel.net") {
+			if (mc.getCurrentServerData().serverIP.contains("hypixel.net")) {
 				System.out.println("Tiped");
 				mc.thePlayer.sendChatMessage("/tipall");
 				lastTip = System.currentTimeMillis();

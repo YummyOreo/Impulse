@@ -44,14 +44,14 @@ public class EnabledButton {
 	private int getColor() {
 		
 		if (m.checkDisabled()) {
-				return new Color(128, 128, 128).getRGB();
+			return new Color(128, 128, 128).getRGB();
 		} else if (m.isEnabled()) {
-			return new Color(0, 225, 0, 255).getRGB();
+			return new Color(0, 211, 95, 255).getRGB();
 			
 		} else {
-			return new Color(255, 0, 0, 255).getRGB();
+			return new Color(224, 85, 53, 255).getRGB();
 		}
-		
+	
 
 	}
 	
@@ -59,21 +59,9 @@ public class EnabledButton {
 		if (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h) {
 			
 			if (m.checkDisabled()) return;
+			
+			m.toggle();
 
-			if(m.isEnabled()) {
-				if (m.name == "[Discord RPC]") {
-					Discordrpc.stopDiscordRPC();
-				}
-				
-				this.m.setEnabled(false);
-			} else {
-				
-				if (m.name == "[Discord RPC]") {
-					Discordrpc.startDiscordRPC();
-				}
-				
-				m.setEnabled(true);
-			}
 		}
 
 	}

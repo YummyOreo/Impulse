@@ -11,28 +11,39 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 
-public class PositionMod extends HudMod {
-
+public class MemoryMod extends HudMod {
+	
 	private BackgroundButton backgroundButton;
 	private ColorButton colorButton;
-	
-	public PositionMod() {
-		super("[Position Mod]", 240, 5, "Allows you to see your current position.");
+
+	public MemoryMod() {
+		super("[Memory usage]", 555, 5, "Shows you memory usage!");
 	}
+	
+	private static long bytesToMb(long bytes)
+    {
+        return bytes / 1024L / 1024L;
+    }
 	
 	@Override
 	public void draw() {
 		
-		if (this.getBackground()) {
-			Gui.drawRect(this.getX() - 1, this.getY() - 1, this.getX() + fr.getStringWidth("[" + getXPos() + "x | " + getZPos() + "z]") + 1, this.getY() + fr.FONT_HEIGHT , new Color(0, 0, 0, 150).getRGB());
-		}
-		
-		if (this.getRainbow()) {
-			GuiUtils.drawChromaString("[" + getXPos() + "x | " + getZPos() + "z]", getX(), getY(), true);
-		} else {
-			fr.drawStringWithShadow("[" + getXPos() + "x | " + getZPos() + "z]", getX(), getY(), this.getColor());
-		}
-		
+		long i = Runtime.getRuntime().maxMemory();
+        long j = Runtime.getRuntime().totalMemory();
+        long k = Runtime.getRuntime().freeMemory();
+        long l = j - k;
+        String ram = (String.format("Mem: % 2d%% %03d/%03dMB", new Object[]{Long.valueOf(l * 100L / i), Long.valueOf(bytesToMb(l)), Long.valueOf(bytesToMb(i))}));
+        
+        if (this.getBackground()) {
+            Gui.drawRect(this.getX() - 1, this.getY() - 1, this.getX() + fr.getStringWidth(ram) + 1, this.getY() + fr.FONT_HEIGHT , new Color(0, 0, 0, 150).getRGB());
+        }
+        
+        if (this.getRainbow()) {
+        	GuiUtils.drawChromaString(ram, getX(), getY(), true);
+        } else {
+        	fr.drawStringWithShadow(ram, getX(), getY(), this.getColor());
+        }
+        
 		super.draw();
 	}
 	
@@ -40,45 +51,26 @@ public class PositionMod extends HudMod {
 	public void renderDummy(int mouseX, int mouseY) {
 		
 		if (this.getBackground()) {
-			Gui.drawRect(this.getX() - 1, this.getY() - 1, this.getX() + fr.getStringWidth("[10x | 10z]") + 1, this.getY() + fr.FONT_HEIGHT , new Color(0, 0, 0, 150).getRGB());
-		}
-
-		if (this.getRainbow()) {
-			GuiUtils.drawChromaString("[10x | 10z]", getX(), getY(), true);
-		} else {
-			fr.drawStringWithShadow("[10x | 10z]", getX(), getY(), this.getColor());
-		}
+            Gui.drawRect(this.getX() - 1, this.getY() - 1, this.getX() + fr.getStringWidth("Ram : 1000mb") + 1, this.getY() + fr.FONT_HEIGHT , new Color(0, 0, 0, 150).getRGB());
+        }
 		
+		if (this.getRainbow()) {
+        	GuiUtils.drawChromaString("Ram : 1000mb", getX(), getY(), true);
+        } else {
+        	fr.drawStringWithShadow("Ram : 1000mb", getX(), getY(), -1);
+        }
+
 		super.renderDummy(mouseX, mouseY);
 	}
 	
 	@Override
 	public int getWidth() {
-		return fr.getStringWidth("[10 | 10]") + 10;
+		return fr.getStringWidth("[Hacks: Enabled]");
 	}
-	
 	
 	@Override
 	public int getHeight() {
 		return fr.FONT_HEIGHT;
-	}
-	
-	private String getXPos() {
-		try {
-			return String.valueOf((int) mc.thePlayer.posX);
-		} catch (Exception e) {
-			return "0";
-		}
-
-	}
-	
-	private String getZPos() {
-		try {
-			return String.valueOf((int) mc.thePlayer.posZ);
-		} catch (Exception e) {
-			return "0";
-		}
-		
 	}
 	
 	@Override

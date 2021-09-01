@@ -1,14 +1,22 @@
 package impulse.hud.mod.impl;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import impulse.hud.mod.HudMod;
+import impulse.hud.mod.ui.buttons.BackgroundButton;
+import impulse.hud.mod.ui.buttons.ColorButton;
+import impulse.util.ui.GuiUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
 public class PotionEffectsMod extends HudMod {
 
+	private ColorButton colorButton;
+	
 	public PotionEffectsMod() {
 		super("[Potion Effects]", 555, 5, "Shows you all your active potion effects!");
 	}
@@ -16,7 +24,11 @@ public class PotionEffectsMod extends HudMod {
 	@Override
 	public void draw() {
 		
-		fr.drawStringWithShadow("Effects", getX(), getY(), -1);
+		if (this.getRainbow()) {
+    		GuiUtils.drawChromaString("Effects", getX(), getY(), true);
+    	} else {
+    		fr.drawStringWithShadow("Effects", getX(), getY(), this.getColor());
+    	}
 		
 		this.drawEffects();
 		
@@ -26,7 +38,7 @@ public class PotionEffectsMod extends HudMod {
 	@Override
 	public void renderDummy(int mouseX, int mouseY) {
 
-		fr.drawStringWithShadow("Effects", getX(), getY(), -1);
+		fr.drawStringWithShadow("Effects", getX(), getY(), this.getColor());
 		
 		super.renderDummy(mouseX, mouseY);
 	}
@@ -67,8 +79,27 @@ public class PotionEffectsMod extends HudMod {
         }
         final String time = Potion.getDurationString(e);
 			
-			fr.drawStringWithShadow(name, getX(), getY() + (fr.FONT_HEIGHT * (count * 1.5f)) + 4, this.getColor());
-			fr.drawStringWithShadow(time, getX() + fr.getStringWidth(name) + 5, getY() + (fr.FONT_HEIGHT * (count * 1.5f)) + 4, this.getColor());
+    	if (this.getRainbow()) {
+    		GuiUtils.drawChromaString(name + "   " + time, getX(), (int) (getY() + (fr.FONT_HEIGHT * (count * 1.5f)) + 4), true);
+    	} else {
+    		fr.drawStringWithShadow(name + "   " + time, getX(), getY() + (fr.FONT_HEIGHT * (count * 1.5f)) + 4, this.getColor());
+    	}
+        
 		}
+	}
+	
+	@Override
+	public void initGui(GuiScreen gui) {
+		this.colorButton = new ColorButton(110, 90, Minecraft.getMinecraft().fontRendererObj.getStringWidth("Change Text Color") + 5, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT + 2, this);
+	}
+	
+	@Override
+	public void drawScreen(GuiScreen gui, int mouseX, int mouseY, float partialTicks) {
+		colorButton.draw();
+	}
+	
+	@Override
+	public void mouseClicked(GuiScreen gui, int mouseX, int mouseY, int mouseButton) throws IOException {
+		colorButton.onClick(mouseX, mouseY, mouseButton);
 	}
 }

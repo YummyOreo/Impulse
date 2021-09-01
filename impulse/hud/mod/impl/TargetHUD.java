@@ -1,13 +1,18 @@
 package impulse.hud.mod.impl;
 
 import java.awt.Color;
+import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;
 
 import impulse.hud.mod.HudMod;
-import impulse.util.ui.Texture;
+import impulse.hud.mod.ui.buttons.BackgroundButton;
+import impulse.hud.mod.ui.buttons.ColorButton;
+import impulse.util.ui.GuiUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -18,7 +23,7 @@ public class TargetHUD extends HudMod {
 
 	EntityLivingBase target;
 	
-
+	private ColorButton colorButton;
 	
 	public TargetHUD() {
 		super("[TargetHUD]", 120, 140, "Shows info about who your looking at!");
@@ -48,10 +53,14 @@ public class TargetHUD extends HudMod {
 			Gui.drawRect(getX(), getY() + fr.FONT_HEIGHT * 2 + 2, getX() + 70, getY() + fr.FONT_HEIGHT * 2 + 4, new Color(114, 223, 228, 255).getRGB());
 
 		}
-		fr.drawStringWithShadow(target.getName(), getX() + 2, getY() + 2, this.getColor());
-		fr.drawStringWithShadow((int) target.getHealth() + " \u2764", getX() + 2, getY() + 2 + fr.FONT_HEIGHT, this.getColor());
-		getArmorValues(target);
 		
+		if (this.getRainbow()) {
+			GuiUtils.drawChromaString(target.getName(), getX() + 2, getY() + 2, true);
+			GuiUtils.drawChromaString((int) target.getHealth() + " \u2764", getX() + 2, getY() + 2 + fr.FONT_HEIGHT, true);
+		} else {
+			fr.drawStringWithShadow(target.getName(), getX() + 2, getY() + 2, this.getColor());
+			fr.drawStringWithShadow((int) target.getHealth() + " \u2764", getX() + 2, getY() + 2 + fr.FONT_HEIGHT, this.getColor());
+		}
 		
 		super.renderDummy(mouseX, mouseY);
 	}
@@ -89,8 +98,15 @@ public class TargetHUD extends HudMod {
 				Gui.drawRect(getX(), getY() + fr.FONT_HEIGHT * 2 + 2, getX() + 70, getY() + fr.FONT_HEIGHT * 2 + 4, new Color(114, 223, 228, 255).getRGB());
 
 			}
-			fr.drawStringWithShadow(target.getName(), getX() + 2, getY() + 2, this.getColor());
-			fr.drawStringWithShadow((int) target.getHealth() + " \u2764", getX() + 2, getY() + 2 + fr.FONT_HEIGHT, this.getColor());
+			
+			if (this.getRainbow()) {
+				GuiUtils.drawChromaString(target.getName(), getX() + 2, getY() + 2, true);
+				GuiUtils.drawChromaString((int) target.getHealth() + " \u2764", getX() + 2, getY() + 2 + fr.FONT_HEIGHT, true);
+			} else {
+				fr.drawStringWithShadow(target.getName(), getX() + 2, getY() + 2, this.getColor());
+				fr.drawStringWithShadow((int) target.getHealth() + " \u2764", getX() + 2, getY() + 2 + fr.FONT_HEIGHT, this.getColor());
+			}
+			
 			getArmorValues(target);
 			
 			
@@ -129,6 +145,21 @@ public class TargetHUD extends HudMod {
 			mc.getRenderItem().renderItemAndEffectIntoGUI(is, xVal, yVal);
 			GlStateManager.popMatrix();
 
+	}
+	
+	@Override
+	public void initGui(GuiScreen gui) {
+		this.colorButton = new ColorButton(110, 90, Minecraft.getMinecraft().fontRendererObj.getStringWidth("Change Text Color") + 5, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT + 2, this);
+	}
+	
+	@Override
+	public void drawScreen(GuiScreen gui, int mouseX, int mouseY, float partialTicks) {
+		colorButton.draw();
+	}
+	
+	@Override
+	public void mouseClicked(GuiScreen gui, int mouseX, int mouseY, int mouseButton) throws IOException {
+		colorButton.onClick(mouseX, mouseY, mouseButton);
 	}
 	
 }

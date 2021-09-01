@@ -13,6 +13,24 @@ public class Config {
 	
 	public Configuration config, configToSave = ConfigurationAPI.newConfiguration(new File("Impulse/Mods/ModConfiguration.impulse"));
 	
+	public void saveResetConfig() {
+		
+		if(!configFolder.exists()) {
+			configFolder.mkdirs();
+		}
+		
+		if(!modsFolder.exists()) {
+			modsFolder.mkdirs();
+		}
+		
+		try {
+			configToSave.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public void saveModConfig() {
 		
 		if(!configFolder.exists()) {
@@ -31,6 +49,8 @@ public class Config {
 			configToSave.set(m.name + " enabled", m.isEnabled());
 			configToSave.set(m.name + " color", m.getColor());
 			configToSave.set(m.name + " rainbow", m.getRainbow());
+			configToSave.set(m.name + " background", m.getBackground());
+			configToSave.set(m.name + " settings", m.getSettings());
 		}
 		
 		try {

@@ -1,16 +1,19 @@
 package impulse.hud.mod;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 import impulse.Impulse;
 import impulse.hud.DraggableComponent;
+import impulse.hud.mod.utils.Loader;
 import impulse.settings.Setting;
 import impulse.util.websockets.Connect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
 
 public class HudMod {
 
@@ -23,7 +26,12 @@ public class HudMod {
 	public boolean enabled;
 	public DraggableComponent drag;
 	public int color;
-	public HashMap<String, String> disabled = new HashMap<String, String>();
+	//public HashMap<String, String> disabled = new HashMap<String, String>();
+	public ArrayList<String> disabled = new ArrayList<>();
+	
+	public String tags = "";
+	
+	public boolean background;
 	
 	//§
 	
@@ -35,71 +43,76 @@ public class HudMod {
 		this.name = name;
 		this.description = description;
 		
+		this.x = (int) Loader.loadVar(this.name, "x", x);
+		this.y = (int) Loader.loadVar(this.name, "y", y);
+		this.enabled = (boolean) Loader.loadVar(this.name, "enabled", false);
+		
+		this.color = (int) Loader.loadVar(this.name, "color", new Color(255, 255, 255).getRGB());
+		this.rainbow = (boolean) Loader.loadVar(this.name, "rainbow", false);
+		
+		this.background = (boolean) Loader.loadVar(this.name, "background", false);
+		
+		drag = new DraggableComponent(this.x, this.y, getWidth(), getHeight(), new Color(0, 0, 0, 0).getRed());
+		
 		try {
-			
-			this.x = (int)Impulse.INSTANCE.config.config.get(name + " x");
-			this.y = (int)Impulse.INSTANCE.config.config.get(name + " y");
-			this.enabled = (boolean)Impulse.INSTANCE.config.config.get(name + " enabled");
-			
+			boolean temp = (boolean) Impulse.INSTANCE.config.config.get(name + " enabled");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			this.x = x;
-			this.y = y;
-			if (this.name.equals("[Impulse Servers]") || this.name.equals("[Discord RPC]") || this.name.equals("[Cape]")) {
-				this.enabled = true;
-			} else {
-				this.enabled = false;
-			}
+			this.firstLoad();
 		}
 		
-		try {
-			this.color = (int)Impulse.INSTANCE.config.config.get(name + " color");
-		} catch (Exception e) {
-			this.color = new Color(255, 255, 255).getRGB();
-		}
-		
-		try {
-			this.rainbow = (boolean)Impulse.INSTANCE.config.config.get(name + " rainbow");
-		} catch (Exception e) {
-			this.rainbow = false;
-		}
-		
-		if (this.name.equals("[Top Hat]")) {
-			if (this.enabled && Connect.INSTANCE.enabled) {
-				Impulse.INSTANCE.socketClient.addCosmetic(mc.thePlayer.getName(), this.name.replace(" ", "" + "%3A" + this.getColor()));
-			}
-		}
-		
-		settings = new ArrayList<Setting>();
-		drag = new DraggableComponent(this.x, this.y, getWidth(), getHeight(), new Color(0, 0, 0, 0).getRed());
+		this.settings = new ArrayList<Setting>();
+		this.load();
 		
 	}
 	
+	public void addTag(String tag) {
+		this.tags += tag + ":";
+	}
+	
+	public boolean getBackground() {
+		return this.background;
+	}
+	
+	public void setBackground(boolean background) {
+		this.background = background;
+	}
+	
 	public void addDisabled(String serverIp) {
-		this.disabled.put(serverIp, serverIp);
+		this.disabled.add(serverIp);
 	}
 	
 	public boolean checkDisabled() {
 		if (Minecraft.getMinecraft().getCurrentServerData() != null) {
-			if (this.disabled.get(Minecraft.getMinecraft().getCurrentServerData().serverIP) != null) return true;
+			for (String ip : this.disabled) {
+				if (Minecraft.getMinecraft().getCurrentServerData().serverIP.contains(ip)) return true;
+			}
 		}
 		return false;
 	}
 	
-	public HashMap<String, String> getDisabled() {
+	public ArrayList<String> getDisabled() {
 		return disabled;
 	}
 	
-	private void addSettings(Setting... sets) {
-		this.settings.add((Setting)Arrays.asList(sets));
+	public void addSettings(Setting set) {
+		this.settings.add(set);
+	}
+
+	public void changeSetting(String name, Object value) {
+		
+	}
+	
+	public HashMap<String, Object> getSettings() {
+		return new HashMap<>();
+	}
+	
+	public void loadSetting() {
+		
 	}
 	
 	public int getColor() {
-		if (this.rainbow) {
-			return Color.HSBtoRGB(Impulse.INSTANCE.hue, 1, 1);
-		} else {
-			return color;
-		}
+		return color;
 	}
 	
 	public void setColor(int color) {
@@ -142,40 +155,16 @@ public class HudMod {
 	
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-		if (this.name.equals("[Top Hat]")) {
-			if (this.enabled && Connect.INSTANCE.enabled) {
-				Impulse.INSTANCE.socketClient.addCosmetic(mc.thePlayer.getName(), this.name.replace(" ", "" + "%3A" + this.getColor()));
-			} else {
-				Impulse.INSTANCE.socketClient.removeCosmetic(mc.thePlayer.getName(), this.name.replace(" ", "" + "%3A" + this.getColor()));
-			}
-		} else if (this.name.equals("[Impulse Servers]")) {
-			if (this.enabled) {
-				Connect.INSTANCE.connectToServer();
-				if (mc.thePlayer != null) {
-					if (Connect.INSTANCE.enabled) {
-						System.out.println(Impulse.INSTANCE.socketClient.addUser(mc.thePlayer.getName()));
-						for (HudMod m : Impulse.INSTANCE.hudManager.hudMods) {
-							if (this.name.equals("[Top Hat]")) {
-								if (this.enabled && Connect.INSTANCE.enabled) {
-									Impulse.INSTANCE.socketClient.addCosmetic(mc.thePlayer.getName(), this.name.replace(" ", "" + "%3A" + this.getColor()));
-								}
-							}
-						}
-					}
-				}
-			} else {
-				Connect.INSTANCE.enabled = false;
-				if (mc.thePlayer != null) {
-					Impulse.INSTANCE.socketClient.removeUser(mc.thePlayer.getName());
-				}
-			}
+		
+		if (this.enabled) {
+			this.onEnable();
+		} else {
+			this.onDisable();
 		}
 	}
 	
 	public void toggle() {
-		if (Minecraft.getMinecraft().getCurrentServerData() != null) {
-			if (this.disabled.get(Minecraft.getMinecraft().getCurrentServerData().serverIP) != null) return;
-		}
+		if (this.checkDisabled()) return;
 		
 		this.setEnabled(!this.enabled);
 		
@@ -183,6 +172,36 @@ public class HudMod {
 	
 	public boolean isEnabled() {
 		return this.enabled;
+	}
+	
+	public void onEnable() {
+		
+	}
+	
+	public void onDisable() {
+		
+	}
+	
+	public void firstLoad() {
+		
+	}
+	
+	public void load() {
+		
+	}
+	
+	public void initGui(GuiScreen gui) {
+		//gui.initGui();
+	}
+	
+	public void drawScreen(GuiScreen gui, int mouseX, int mouseY, float partialTicks) {
+		//gui.drawScreen(mouseX, mouseY, partialTicks);
+	}
+	
+	public void mouseClicked(GuiScreen gui, int mouseX, int mouseY, int mouseButton) throws IOException {
+		
+		//gui.mouseClicked(mouseX, mouseY, mouseButton);
+		
 	}
 	
 }

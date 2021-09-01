@@ -5,20 +5,25 @@ import java.util.ArrayList;
 import impulse.cosmetics.toggle.CapeMod;
 import impulse.cosmetics.toggle.TopHatMod;
 import impulse.hud.mod.impl.ArmorStatusMod;
+import impulse.hud.mod.impl.AutoGG;
 import impulse.hud.mod.impl.AutoTipMod;
 import impulse.hud.mod.impl.CPSMod;
 import impulse.hud.mod.impl.DiscordRPCToggle;
 import impulse.hud.mod.impl.FPSMod;
+import impulse.hud.mod.impl.FullBrightMod;
 import impulse.hud.mod.impl.ImpulseServerMod;
 import impulse.hud.mod.impl.KeystrokesMod;
+import impulse.hud.mod.impl.MemoryMod;
 import impulse.hud.mod.impl.PerspectiveMod;
 import impulse.hud.mod.impl.PingMod;
 import impulse.hud.mod.impl.PositionMod;
 import impulse.hud.mod.impl.PotionEffectsMod;
+import impulse.hud.mod.impl.ResourcePackMod;
 import impulse.hud.mod.impl.ServerMod;
 import impulse.hud.mod.impl.TargetHUD;
 import impulse.hud.mod.impl.ToggleStrintGui;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
 
 public class HudManager {
 
@@ -28,6 +33,7 @@ public class HudManager {
 	
 	//a
 	public ArmorStatusMod armorStatus;
+	public AutoGG autoGG;
 	public AutoTipMod autoTipMod;
 	//b
 	//c
@@ -38,6 +44,7 @@ public class HudManager {
 	//e
 	//f
 	public FPSMod fpsMod;
+	public FullBrightMod fullBrightMod;
 	//g
 	//h
 	//i
@@ -47,6 +54,7 @@ public class HudManager {
 	public KeystrokesMod keystrokes;
 	//l
 	//m
+	public MemoryMod memoryMod;
 	//n
 	//o
 	//p
@@ -56,6 +64,7 @@ public class HudManager {
 	public PingMod pingMod;
 	//q
 	//r
+	public ResourcePackMod resourcePackMod;
 	//s
 	public ServerMod serverMod;
 	//t
@@ -72,6 +81,7 @@ public class HudManager {
 	public HudManager() {
 		// a
 		hudMods.add(armorStatus = new ArmorStatusMod());
+		hudMods.add(autoGG = new AutoGG());
 		hudMods.add(autoTipMod = new AutoTipMod());
 		//b
 		//c
@@ -82,6 +92,7 @@ public class HudManager {
 		//e
 		//f
 		hudMods.add(fpsMod = new FPSMod());
+		hudMods.add(fullBrightMod = new FullBrightMod());
 		//g
 		//h
 		//i
@@ -91,6 +102,7 @@ public class HudManager {
 		hudMods.add(keystrokes = new KeystrokesMod());
 		//l
 		//m
+		hudMods.add(memoryMod = new MemoryMod());
 		//n
 		//o
 		//p
@@ -100,6 +112,7 @@ public class HudManager {
 		hudMods.add(pingMod = new PingMod());
 		//q
 		//r
+		hudMods.add(resourcePackMod = new ResourcePackMod());
 		//s
 		hudMods.add(serverMod = new ServerMod());
 		//t
